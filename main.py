@@ -13,7 +13,7 @@ from os import environ
 class Application(tornado.web.Application):
     def __init__(self, MONGOURL):
         handlers = [
-            #(r"/", MainHandler),
+            (r"/", MainHandler),
             (r"/chatsocket", ChatSocketHandler),
         ]
         
@@ -24,6 +24,10 @@ class Application(tornado.web.Application):
         )
         
         tornado.web.Application.__init__(self, handlers, **settings)
+
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("You should not be here.")
 
 class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     handlers = set()
@@ -42,10 +46,10 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             
     @classmethod
     def send_updates(cls, chat):
-        print("sending message to " + str(len(cls.handlers)) + " waiters")
+        print("sending message to " + str(len(cls.handlers)) + " clients")
         for handler in cls.handlers:
             try:
-                handler.write_message("Someone: " + chat)
+                handler.write_message(chat)
             except:
                 print("Error sending message")
         
@@ -62,7 +66,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             #print(document)
         print(docsList)
         for document in docsList[::-1]:
-            self.write_message("Someone: " + document["message"])
+            self.write_message(document["message"])
         print("Done sending previous messages")
             
     def on_message(self, message):
