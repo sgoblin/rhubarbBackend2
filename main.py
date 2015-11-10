@@ -36,7 +36,8 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     
     def check_origin(self, origin):
         parsed_origin = urllib.parse.urlparse(origin)
-        return parsed_origin.netloc == "axiom-halt.codio.io"
+        print(parsed_origin.netloc)
+        return parsed_origin.netloc == "axiom-halt.codio.io" or parsed_origin.netloc == "chatbot.sgoblin.com"
         
     @classmethod
     def update_cache(cls, chat):
