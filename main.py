@@ -10,7 +10,7 @@ import time
 import pymongo
 from os import environ
 
-good_origins = ["axiom-halt.codio.io", "chatbot.sgoblin.com", "network-limit.codio.io"]
+good_origins = ["axiom-halt.codio.io", "chatbot.sgoblin.com", "network-limit.codio.io", "rhubarb.sgoblin.com"]
 
 class Application(tornado.web.Application):
     def __init__(self, MONGOURL):
