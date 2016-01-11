@@ -10,6 +10,8 @@ import time
 import pymongo
 from os import environ
 
+good_origins = ["axiom-halt.codio.io", "chatbot.sgoblin.com", "network-limit.codio.io"]
+
 class Application(tornado.web.Application):
     def __init__(self, MONGOURL):
         handlers = [
@@ -40,7 +42,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):
         parsed_origin = urllib.parse.urlparse(origin)
         print(parsed_origin.netloc)
-        return parsed_origin.netloc == "axiom-halt.codio.io" or parsed_origin.netloc == "chatbot.sgoblin.com" or parsed_origin.netloc == "network-limit.codio.io"
+        return parsed_origin.netloc in good_origins
         
     @classmethod
     def update_cache(cls, chat):
