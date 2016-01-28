@@ -9,8 +9,9 @@ import urllib
 import time
 import pymongo
 from os import environ
+import json
 
-good_origins = ["axiom-halt.codio.io", "chatbot.sgoblin.com", "network-limit.codio.io", "rhubarb.sgoblin.com"]
+good_origins = ["axiom-halt.codio.io", "chatbot.sgoblin.com", "network-limit.codio.io", "rhubarb.sgoblin.com", "market-perfume.codio.io"]
 
 class Application(tornado.web.Application):
     def __init__(self, MONGOURL):
@@ -22,7 +23,7 @@ class Application(tornado.web.Application):
         client = motor.MotorClient(MONGOURL)
         
         settings = dict(
-            db = client.mongotest
+            db = client.rhubarb_chat
         )
         
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -72,22 +73,24 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             #print(document)
         print(docsList)
         for document in docsList[::-1]:
-            self.write_message(document["message"])
+            self.write_message(document)
         print("Done sending previous messages")
             
     def on_message(self, message):
-        imsorrydave = "HAL: I'm sorry Dave, I can't do that."
+        imsorrydave = {"message": "I'm sorry Dave, I can't do that.", "name": "HAL"}
         print(message)
-        messageData = message.split(":", 1)[1].strip().lower()
+        message = json.loads(message)
+        messageData = message["message"]
+        messageSender = message["name"]
         ChatSocketHandler.update_cache(message)
         ChatSocketHandler.send_updates(message)
         chatMessages = self.settings["db"].chatmessages
-        messageObject = {"_id": time.time(), "message": message}
+        messageObject = {"_id": time.time(), "name": messageSender, "message": messageData}
         chatMessages.insert(messageObject)
         if (messageData == "open the pod bay doors, hal" or messageData == "open the pod bay doors hal" or  messageData == "open the pod bay doors, hal!" or messageData == "open the pod bay doors, hal." or messageData == "open the pod bay doors hal!" or messageData == "open the pod bay doors hal."):
             ChatSocketHandler.update_cache(imsorrydave)
             ChatSocketHandler.send_updates(imsorrydave)
-            imsorryObject = {"_id": time.time(), "message": imsorrydave}
+            imsorryObject = {"_id": time.time(), "message": imsorrydave.message, "name": imsorrydave.name}
             chatMessages.insert(imsorryObject)
         
     def on_close(self):
