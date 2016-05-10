@@ -11,7 +11,7 @@ import pymongo
 from os import environ
 import json
 
-good_origins = ["axiom-halt.codio.io", "chatbot.sgoblin.com", "network-limit.codio.io", "rhubarb.sgoblin.com", "market-perfume.codio.io"]
+good_origins = ["rhubarbdev.sgoblin.com", "chatbot.sgoblin.com", "network-limit.codio.io", "rhubarb.sgoblin.com", "deliver-athlete.codio.io"]
 
 class Application(tornado.web.Application):
     def __init__(self, MONGOURL):
@@ -23,7 +23,7 @@ class Application(tornado.web.Application):
         client = motor.MotorClient(MONGOURL)
         
         settings = dict(
-            db = client.rhubarb_chat
+            db = client.rhubarbdev
         )
         
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -99,7 +99,10 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
 
 def main(MONGOURL):
     app = Application(MONGOURL)
-    app.listen(8080)
+    app.listen(8081, ssl_options={ 
+        "certfile": os.path.join("certs", "rhubarb.crt"),
+        "keyfile": os.path.join("certs", "rhubarb.key"),
+    })
     tornado.ioloop.IOLoop.current().start()
     
 if __name__ == "__main__":
