@@ -92,8 +92,8 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
 def main(MONGOURL):
     app = Application(MONGOURL)
     app.listen(8081, ssl_options={ 
-        "certfile": os.path.join("certs", "rhubarb.crt"),
-        "keyfile": os.path.join("certs", "rhubarb.key"),
+        "certfile": os.path.join(os.path.dirname(os.path.realpath(__file__)), "certs", "rhubarb.crt"),
+        "keyfile": os.path.join(os.path.dirname(os.path.realpath(__file__)), "certs", "rhubarb.key"),
     })
     tornado.ioloop.IOLoop.current().start()
     
