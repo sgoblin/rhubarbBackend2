@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
-import motor
-import tornado.web
-import tornado.ioloop
-import tornado.websocket
+import motor, tornado.web, tornado.ioloop, tornado.websocket, bson, urllib, time, pymongo, json, os
 from tornado import gen
-import bson
-import urllib
-import time
-import pymongo
 from os import environ
-import json
 
 good_origins = ["rhubarbdev.sgoblin.com", "chatbot.sgoblin.com", "network-limit.codio.io", "rhubarb.sgoblin.com", "deliver-athlete.codio.io"]
 
