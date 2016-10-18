@@ -69,7 +69,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         print("Done sending previous messages")
             
     def on_message(self, message):
-        imsorrydave = {"message": "I'm sorry Dave, I can't do that.", "name": "HAL", "_id": time.time()}
+        imsorrydave = {"message": "I'm sorry Dave, I can't do that.", "name": "HAL"}
         print(message)
         message = json.loads(message)
         messageData = message["message"]
