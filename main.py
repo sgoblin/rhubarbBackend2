@@ -83,7 +83,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         if (messageLower == "open the pod bay doors, hal" or messageLower == "open the pod bay doors hal" or  messageLower == "open the pod bay doors, hal!" or messageLower == "open the pod bay doors, hal." or messageLower == "open the pod bay doors hal!" or messageLower == "open the pod bay doors hal."):
             ChatSocketHandler.update_cache(imsorrydave)
             ChatSocketHandler.send_updates(imsorrydave)
-            imsorryObject = {"_id": time.time(), "message": imsorrydave.message, "name": imsorrydave.name}
+            imsorryObject = {"_id": time.time(), "message": imsorrydave["message"], "name": imsorrydave["name"]}
             chatMessages.insert(imsorryObject)
         
     def on_close(self):
