@@ -69,17 +69,18 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         print("Done sending previous messages")
             
     def on_message(self, message):
-        imsorrydave = {"message": "I'm sorry Dave, I can't do that.", "name": "HAL"}
+        imsorrydave = {"message": "I'm sorry Dave, I can't do that.", "name": "HAL", "_id": time.time()}
         print(message)
         message = json.loads(message)
         messageData = message["message"]
+        messageLower = messageData.lower().strip()
         messageSender = message["name"]
         ChatSocketHandler.update_cache(message)
         ChatSocketHandler.send_updates(message)
         chatMessages = self.settings["db"].chatmessages
         messageObject = {"_id": time.time(), "name": messageSender, "message": messageData}
         chatMessages.insert(messageObject)
-        if (messageData == "open the pod bay doors, hal" or messageData == "open the pod bay doors hal" or  messageData == "open the pod bay doors, hal!" or messageData == "open the pod bay doors, hal." or messageData == "open the pod bay doors hal!" or messageData == "open the pod bay doors hal."):
+        if (messageLower == "open the pod bay doors, hal" or messageLower == "open the pod bay doors hal" or  messageLower == "open the pod bay doors, hal!" or messageLower == "open the pod bay doors, hal." or messageLower == "open the pod bay doors hal!" or messageLower == "open the pod bay doors hal."):
             ChatSocketHandler.update_cache(imsorrydave)
             ChatSocketHandler.send_updates(imsorrydave)
             imsorryObject = {"_id": time.time(), "message": imsorrydave.message, "name": imsorrydave.name}
