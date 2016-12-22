@@ -2,3 +2,6 @@ wsEnv
 mongoURL.txt
 *~
 certs
+oldCerts
+letsencrypt.log
+convertcerts.sh
