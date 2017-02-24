@@ -11,13 +11,13 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/chatsocket", ChatSocketHandler),
         ]
-        
+
         client = motor.MotorClient(MONGOURL)
-        
+
         settings = dict(
-            db = client.rhubarbdev
+            db = client.rhubarbchat_1_1
         )
-        
+
         tornado.web.Application.__init__(self, handlers, **settings)
 
 class MainHandler(tornado.web.RequestHandler):
@@ -31,18 +31,18 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     handlers = set()
     cache = []
     cache_size = 100
-    
+
     def check_origin(self, origin):
         parsed_origin = urllib.parse.urlparse(origin)
         print(parsed_origin.netloc)
         return parsed_origin.netloc in good_origins
-        
+
     @classmethod
     def update_cache(cls, chat):
         cls.cache.append(chat)
         if len(cls.cache) > cls.cache_size:
             cls.cache = cls.cache[-cls.cache_size:]
-            
+
     @classmethod
     def send_updates(cls, chat):
         print("sending message to " + str(len(cls.handlers)) + " clients")
@@ -51,7 +51,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
                 handler.write_message(chat)
             except:
                 print("Error sending message")
-        
+
     @gen.coroutine
     def open(self):
         ChatSocketHandler.handlers.add(self)
@@ -67,7 +67,7 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         for document in docsList[::-1]:
             self.write_message(document)
         print("Done sending previous messages")
-            
+
     def on_message(self, message):
         imsorrydave = {"message": "I'm sorry Dave, I can't do that.", "name": "HAL"}
         print(message)
@@ -85,18 +85,18 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
             ChatSocketHandler.send_updates(imsorrydave)
             imsorryObject = {"_id": time.time(), "message": imsorrydave["message"], "name": imsorrydave["name"]}
             chatMessages.insert(imsorryObject)
-        
+
     def on_close(self):
         ChatSocketHandler.handlers.remove(self)
         print("Boo hoo, client disconnected :'(")
 
 def main(MONGOURL):
     app = Application(MONGOURL)
-    app.listen(8081, ssl_options={ 
+    app.listen(8081, ssl_options={
         "certfile": os.path.join(os.path.dirname(os.path.realpath(__file__)), "certs", "rhubarb.crt"),
         "keyfile": os.path.join(os.path.dirname(os.path.realpath(__file__)), "certs", "rhubarb.key"),
     })
     tornado.ioloop.IOLoop.current().start()
-    
+
 if __name__ == "__main__":
     main(environ["MONGOURL"])
