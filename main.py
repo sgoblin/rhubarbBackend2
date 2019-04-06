@@ -79,12 +79,12 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
         ChatSocketHandler.send_updates(message)
         chatMessages = self.settings["db"].chatmessages
         messageObject = {"_id": time.time(), "name": messageSender, "message": messageData}
-        chatMessages.insert(messageObject)
+        chatMessages.insert_one(messageObject)
         if (messageLower == "open the pod bay doors, hal" or messageLower == "open the pod bay doors hal" or  messageLower == "open the pod bay doors, hal!" or messageLower == "open the pod bay doors, hal." or messageLower == "open the pod bay doors hal!" or messageLower == "open the pod bay doors hal."):
             ChatSocketHandler.update_cache(imsorrydave)
             ChatSocketHandler.send_updates(imsorrydave)
             imsorryObject = {"_id": time.time(), "message": imsorrydave["message"], "name": imsorrydave["name"]}
-            chatMessages.insert(imsorryObject)
+            chatMessages.insert_one(imsorryObject)
 
     def on_close(self):
         ChatSocketHandler.handlers.remove(self)
